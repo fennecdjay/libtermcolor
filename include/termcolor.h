@@ -25,7 +25,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__WIN32) && !defined(__CYGWIN__) && defined (ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__WIN32) && !defined(__CYGWIN__)) && defined (ENABLE_VIRTUAL_TERMINAL_PROCESSING)
     #define TERMCOLOR_OS_WIN
     #include <windows.h>
 #endif
