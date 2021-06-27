@@ -143,7 +143,7 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
     }
 
     // '0' signifies no color, i.e. a reset
-    if (*color == '0' && k == 1) {
+    if (k == 1 && *color == '0') {
         size_t j = 0;
         __APPEND('\033');
         __APPEND('[');
@@ -265,7 +265,7 @@ static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
                 }
 
                 // Create the escape sequence.
-                size_t len;
+                size_t len = 0;
                 int status = tcol_color_parse(dst + j, dstn - j, color, k,
                                               &len);
                 if (status != TermColorErrorNone) {
