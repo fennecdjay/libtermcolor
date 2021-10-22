@@ -1,18 +1,18 @@
-// libtermcolor: termcolor.c
-// Copyright (C) 2021 Ethan Uppal
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <https://www.gnu.org/licenses/>.
+/* libtermcolor: termcolor.c
+   Copyright (C) 2021 Ethan Uppal
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see <https://www.gnu.org/licenses/>. */
 
 #include "termcolor.h"
 #include <stdarg.h>
@@ -71,24 +71,24 @@ enum _termcolor_internal_color {
 
 int _tcol_color_generate(char *dst, size_t dstn, size_t *len, int rep,
                          int foreground, int background) {
-    // Much of the code here was informed by the following gist:
-    // https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+    /* Much of the code here was informed by the following gist:
+       https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797 */
 
     size_t j = 0;
 
-    // This macro checks to make sure we don't overrun the buffer when we add
-    // a new character,
+    /* This macro checks to make sure we don't overrun the buffer when we add
+        a new character, */
     #define __APPEND(c) do { \
         dst[j++] = (c); \
         if (j >= dstn) return TermColorErrorNone; \
     } while (0)
 
-    // Every escape code begans with "\e["
+    /* Every escape code begins with "\e[" */
     __APPEND('\033');
     __APPEND('[');
 
-    // Add the appropriate parameters to our escape sequence depending on the
-    // flags set in rep(resentation).
+    /* Add the appropriate parameters to our escape sequence depending on the
+       flags set in rep(resentation). */
     if (rep & _termcolor_internal_color_BOLD) {
         __APPEND('1');
         __APPEND(';');
@@ -114,7 +114,7 @@ int _tcol_color_generate(char *dst, size_t dstn, size_t *len, int rep,
         __APPEND(';');
     }
 
-    // If foreground and background colors were provided, snprintf them to dst.
+    /* If foreground and background colors were provided, snprintf them to dst. */
     if (foreground != -1) {
         j += snprintf(dst + j, dstn - j, "%d;", foreground);
         if (j >= dstn) return TermColorErrorNone;
@@ -128,7 +128,7 @@ int _tcol_color_generate(char *dst, size_t dstn, size_t *len, int rep,
         j--;
     }
 
-    // Graphics mode escape sequences end with 'm'
+    /* Graphics mode escape sequences end with 'm' */
     __APPEND('m');
 
     *len = j;
@@ -142,7 +142,7 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
         return TermColorErrorNone;
     }
 
-    // '0' signifies no color, i.e. a reset
+    /* '0' signifies no color, i.e. a reset */
     if (k == 1 && *color == '0') {
         size_t j = 0;
         __APPEND('\033');
@@ -152,8 +152,8 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
         return TermColorErrorNone;
     }
 
-    // As -1 they are ignored. Otherwise they are set to the foreground color
-    // code. The backround code is later added 10 to.
+    /* As -1 they are ignored. Otherwise they are set to the foreground color
+       code. The backround code is later added 10 to. */
     int foreground = -1;
     int background = -1;
 
@@ -161,8 +161,8 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
     size_t i;
     for (i = 0; i < k; i++) {
         switch (color[i]) {
-            // Farily straightforward; just sets the flags corresponding to the
-            // color attributes.
+            /* Farily straightforward; just sets the flags corresponding to the
+               color attributes. */
             case '+':
                 rep |= _termcolor_internal_color_BOLD;
                 break;
@@ -182,8 +182,8 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
                 rep |= _termcolor_internal_color_ITLC;
                 break;
 
-                // Here we take the character after the ',' and use that as our
-                // background color code, like Nano does.
+                /* Here we take the character after the ',' and use that as our
+                   background color code, like Nano does. */
             case ',': {
                 if (i + 1 >= k) {
                     return TermColorErrorInvalidColor;
@@ -197,8 +197,8 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
                 break;
             }
             default: {
-                // If we haven't matched anything, we assume its a foreground
-                // color. Make sure it is and error if not.
+                /* If we haven't matched anything, we assume its a foreground
+                   color. Make sure it is and error if not. */
                 const int result = _termcolor_internal_lookup(color[i]);
                 if (result != -1) {
                     foreground = result;
@@ -214,12 +214,12 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
 
 static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
                                  size_t srcn) {
-    // Variables:
-    //   i = index in source
-    //   j = index in destination
+    /* Variables:
+         i = index in source
+         j = index in destination
 
-    // 1. We loop throughout the source until we reach the end or until we
-    // cannot write into dst anymore.
+       1. We loop throughout the source until we reach the end or until we
+       cannot write into dst anymore. */
     if (dstn == 0) {
         return TermColorErrorNone;
     }
@@ -227,45 +227,45 @@ static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
     dstn--;
     for (i = 0; i < srcn && j < dstn; i++) {
         loop_top:
-        // 2. We check if the current character is '{'.
+        /* 2. We check if the current character is '{'. */
         if (src[i] == '{') {
-            // 3.B. If it is, we make sure it's not escaped with "{{".
+            /* 3.B. If it is, we make sure it's not escaped with "{{". */
             if (i + 1 < srcn && src[i + 1] == '{') {
                 i++;
                 dst[j++] = '{';
             } else {
                 i++;
 
-                // 4. If not escape, we obtain the color and parse it.
+                /* 4. If not escape, we obtain the color and parse it. */
                 char color[16];
                 int k = 0;
                 while (i < srcn && src[i] != '}') {
-                    // Allow spaces in the color
+                    /* Allow spaces in the color */
                     if (src[i] == ' ') {
                         i++;
                         if (src[i] == '}') {
                             i++;
-                            // If the color is all spaces, ignore it.
+                            /* If the color is all spaces, ignore it. */
                             goto loop_top;
                         }
                         continue;
                     }
 
-                    // Copy over the contents of the source to the color buffer.
+                    /* Copy over the contents of the source to the color buffer. */
                     color[k++] = src[i++];
 
-                    // Make sure no bounds are overrun.
+                    /* Make sure no bounds are overrun. */
                     if (k > 16) {
                         return TermColorErrorUnterminatedColor;
                     }
                 }
 
-                // Confirm we ended on a right bracket
+                /* Confirm we ended on a right bracket */
                 if (src[i] != '}') {
                     return TermColorErrorUnterminatedColor;
                 }
 
-                // Create the escape sequence.
+                /* Create the escape sequence. */
                 size_t len = 0;
                 int status = tcol_color_parse(dst + j, dstn - j, color, k,
                                               &len);
@@ -275,8 +275,8 @@ static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
                 j += len;
             }
         } else {
-            // 3.A. If not, just write the character to the destination to
-            // copy verbatim.
+            /* 3.A. If not, just write the character to the destination to
+               copy verbatim. */
             dst[j++] = src[i];
         }
     }
@@ -287,12 +287,12 @@ static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
 
 static inline int tcol_vsnprintf(char *stream, size_t N, const char *fmt,
                                  va_list ap) {
-    // Gets the length of the format string and calculates a length for the new
-    // format string to be created.
+    /* Gets the length of the format string and calculates a length for the new
+       format string to be created. */
     const size_t l = strlen(fmt);
     const size_t n = l * 2 + 16;
 
-    // Allocates and produces the new format string.
+    /* Allocates and produces the new format string. */
     char *buffer = malloc(n);
     if (buffer == NULL) {
         return TermColorErrorAllocationFailed;
@@ -303,27 +303,27 @@ static inline int tcol_vsnprintf(char *stream, size_t N, const char *fmt,
         return status;
     }
 
-    // Perform the snprintf itself.
+    /* Perform the snprintf itself. */
     if (vsnprintf(stream, N, buffer, ap) < 0) {
         free(buffer);
         return TermColorErrorPrintingFailed;
     }
 
-    // Cleanup resources.
+    /* Cleanup resources. */
     free(buffer);
 
     return TermColorErrorNone;
 }
 
-// TODO: BAD! Remove this code duplication.
+/* TODO: BAD! Remove this code duplication. */
 
 static inline int tcol_vfprintf(FILE *stream, const char *fmt, va_list ap) {
-    // Gets the length of the format string and calculates a length for the new
-    // format string to be created.
+    /* Gets the length of the format string and calculates a length for the new
+       format string to be created. */
     const size_t l = strlen(fmt);
     const size_t n = l * 2 + 16;
 
-    // Allocates and produces the new format string.
+    /* Allocates and produces the new format string. */
     char *buffer = malloc(n);
     if (buffer == NULL) {
         return TermColorErrorAllocationFailed;
@@ -334,30 +334,30 @@ static inline int tcol_vfprintf(FILE *stream, const char *fmt, va_list ap) {
         return status;
     }
     #ifdef TERMCOLOR_OS_WIN
-        HANDLE output  = GetStdHandle(STD_OUTPUT_HANDLE); // Console Output
+        HANDLE output  = GetStdHandle(STD_OUTPUT_HANDLE); /* Console Output */
         DWORD mode;
         GetConsoleMode(output, &mode);
-        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING; // Process ANSI Escape
-        mode |= ENABLE_PROCESSED_OUTPUT; // Process ASCII Escape
+        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING; /* Process ANSI Escape */
+        mode |= ENABLE_PROCESSED_OUTPUT; /* Process ASCII Escape */
         WINBOOL set = !SetConsoleMode(output, mode);
-        if (set) { // If we could not set the console mode, we cannot print it
+        if (set) { /* If we could not set the console mode, we cannot print it */
             return TermColorErrorPrintingFailed;
         }
     #endif
-    // Perform the printf itself.
+    /* Perform the printf itself. */
     if (vfprintf(stream, buffer, ap) < 0) {
         free(buffer);
         return TermColorErrorPrintingFailed;
     }
 
-    // Cleanup resources.
+    /* Cleanup resources. */
     free(buffer);
 
     return TermColorErrorNone;
 }
 
-// These functions just create a variable argument list and call tcol_vfprintf
-// with the appropriate FILE* stream.
+/* These functions just create a variable argument list and call tcol_vfprintf
+   with the appropriate FILE* stream. */
 int tcol_fprintf(FILE *stream, const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
@@ -374,7 +374,7 @@ int tcol_printf(const char *fmt, ...) {
     return status;
 }
 
-// This is similar except it prints to a buffer
+/* This is similar except it prints to a buffer */
 int tcol_snprintf(char *stream, size_t N, const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
