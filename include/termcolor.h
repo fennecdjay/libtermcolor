@@ -24,6 +24,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "termcolor_export.h"
 
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__WIN32) && !defined(__CYGWIN__)) && defined (ENABLE_VIRTUAL_TERMINAL_PROCESSING)
     #define TERMCOLOR_OS_WIN
@@ -80,15 +81,15 @@ const char *tcol_errorstr(const enum term_color_error_t err);
 //
 // NOTE: color is not null-terminated as its length is given by k which shall be
 // between 1 and 16.
-int tcol_color_parse(char *dst, size_t dstn, char color[16],
-                     size_t k, size_t *len);
+TERMCOLOR_EXPORT int tcol_color_parse(char *dst, size_t dstn, char color[16],
+                                      size_t k, size_t *len);
 
 // By default libtermcolor will use color. However this behavior can be manually
 // overridden using this function.
 //
 // Parameters
 // - `enable_color`: Whether to enable "colorization" of the format string
-void tcol_override_color_checks(bool enable_color);
+TERMCOLOR_EXPORT void tcol_override_color_checks(bool enable_color);
 
 // Printfs the colorized format string to the specified stream.
 //
@@ -98,7 +99,7 @@ void tcol_override_color_checks(bool enable_color);
 //
 // Return Value:
 // - `int`: One of the values `enum term_color_error_t`
-int tcol_fprintf(FILE *stream, const char *fmt, ...);
+TERMCOLOR_EXPORT int tcol_fprintf(FILE *stream, const char *fmt, ...);
 
 // Printfs the colorized format string to the standard output.
 //
@@ -109,7 +110,7 @@ int tcol_fprintf(FILE *stream, const char *fmt, ...);
 //
 // Return Value:
 // - `int`: One of the values `enum term_color_error_t`
-int tcol_printf(const char *fmt, ...);
+TERMCOLOR_EXPORT int tcol_printf(const char *fmt, ...);
 
 // Snprintfs the colorized format string to the specified string stream.
 //
@@ -121,6 +122,6 @@ int tcol_printf(const char *fmt, ...);
 //
 // Return Value:
 // - `int`: One of the values `enum term_color_error_t`
-int tcol_snprintf(char *buffer, size_t N, const char *fmt, ...);
+TERMCOLOR_EXPORT int tcol_snprintf(char *buffer, size_t N, const char *fmt, ...);
 
 #endif /* _LIBTERMCOLOR_TERMCOLOR_H */

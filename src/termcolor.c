@@ -158,7 +158,8 @@ int tcol_color_parse(char *dst, size_t dstn, char color[16], size_t k,
     int background = -1;
 
     enum _termcolor_internal_color rep = 0;
-    for (size_t i = 0; i < k; i++) {
+    size_t i;
+    for (i = 0; i < k; i++) {
         switch (color[i]) {
             // Farily straightforward; just sets the flags corresponding to the
             // color attributes.
@@ -222,9 +223,9 @@ static inline int tcol_fmt_parse(char *dst, size_t dstn, const char *src,
     if (dstn == 0) {
         return TermColorErrorNone;
     }
-    size_t j = 0;
+    size_t j = 0, i;
     dstn--;
-    for (size_t i = 0; i < srcn && j < dstn; i++) {
+    for (i = 0; i < srcn && j < dstn; i++) {
         loop_top:
         // 2. We check if the current character is '{'.
         if (src[i] == '{') {

@@ -7,3 +7,5 @@ debug/main.dSYM/Contents/Info.plist
 *.a
 demo
 .idea
+*build*
+*_export.h
