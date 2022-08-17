@@ -39,7 +39,7 @@ if (result != TermColorErrorNone) {
 First, clone the repo and navigate into its directory:
 
 ```sh
-git clone https://github.com/euppal/libtermcolor
+git clone https://github.com/Gwion/libtermcolor
 cd libtermcolor
 ```
 
