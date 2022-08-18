@@ -55,7 +55,7 @@ install(
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_BUNDLE_NAME "lib${PROJECT_NAME}")
-set(CPACK_PACKAGE_VENDOR "Ethan Uppal")
+set(CPACK_PACKAGE_VENDOR "Jérémie Astor")
 set(CPACK_PACKAGE_DESCRIPTION "A printf variant that supports colors and graphics attributes supported in most modern terminals.")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "libtermcolor allows you to add flair to your messages with colors, italics and other graphics.")
 if (APPLE)
@@ -68,7 +68,7 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION_MINOR}")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/cmake/README.txt")
 set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Welcome.txt")
-set(CPACK_PACKAGE_CONTACT "https://github.com/euppal/lib${PROJECT_NAME}")
+set(CPACK_PACKAGE_CONTACT "https://github.com/Gwion/lib${PROJECT_NAME}")
 
 include(CPack)
 include(CMakePackageConfigHelpers)
